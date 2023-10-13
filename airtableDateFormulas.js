@@ -30,8 +30,13 @@ IF(
     DATETIME_FORMAT(local_date, 'MMMM') & " 16th-end"
   )
 
-IF(
-    DAY(local_date) <= 15,     
-    DATETIME_FORMAT(local_date, 'MMMM') & " 1st-15th",
-    DATETIME_FORMAT(local_date, 'MMMM') & " 16th-end"
-)
+
+  DATETIME_FORMAT(
+    DATETIME_PARSE(
+        IF(
+          DAY(local_date) <= 15,     
+          DATETIME_FORMAT(local_date, 'MM') & "/01",
+          DATETIME_FORMAT(local_date, 'MM') & "/16"
+      ), 'MM/DD'
+    ), 'MM/DD'
+  )

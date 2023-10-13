@@ -1,0 +1,1 @@
+CONCATENATE("<li>", {Project Name}, " = $", ROUND({Project_Cost_Rollup},0), "</li>")
