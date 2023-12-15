@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timers with Visual Countdown</title>
+    <style>
+        #timerContainer {
+            text-align: center;
+            margin: auto;
+            width: 35%;
+            padding: 10px;
+            border: 0px solid #ebebeb;
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            font-size: .85em;
+            color: #374151;
+            margin: 3px 0;
+        }
+
+        .timer-value {
+            font-size: 1.25em; /* Increased font size */
+            color: #374151;
+            margin: 3px 0;
+        }
+
+        .intended-time {
+            font-size: .85em; /* smaller size */
+            color: #374151;
+            margin-top: 3px;
+        }
+
+        #pieChart {
+            width: 70px;
+            height: 70px;
+            margin: 3px auto;
+            display: none; /* Initially hidden */
+        }
+
+        .chart-background {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 10;
+        }
+
+        .chart-foreground {
+            fill: none;
+            stroke: #600b68; /* Imperial purple */
+            stroke-width: 10;
+            stroke-dasharray: 282.6; /* Circumference of the circle */
+            stroke-dashoffset: 282.6; /* Full circle */
+            transition: stroke-dashoffset 1s linear;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .chart-text {
+            fill: #616161;
+            font-size: 14px; /* Adjusted for visibility */
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="timerContainer">
+        <div class="header"><b>Stopwatch</b></div>
+        <div id="countUpTimer" class="timer-value"></div>
+        <p></p>
+        <div class="header"><b>Intended Time Remaining</b></div>
+        <svg id="pieChart" viewBox="0 0 100 100">
+            <circle class="chart-background" cx="50" cy="50" r="45"/>
+            <circle class="chart-foreground" cx="50" cy="50" r="45"/>
+            <text x="50" y="52" class="chart-text"></text>
+        </svg>
+        <div id="intendedTime" class="intended-time"></div>
+    </div>
+
+    <script type="text/javascript">
+        console.log(window.logged_in_user)
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const startTime = new Date(params.get('prefill_Start_Time_Manual'));
+            const intendedDurationInMinutes = new Number(params.get('prefill_Intended_Duration'));
+            const pieChart = document.getElementById('pieChart');
+            const countUpTimerElement = document.getElementById('countUpTimer');
+            const intendedTimeElement = document.getElementById('intendedTime');
+            const chartText = document.querySelector('.chart-text');
+        
+            if (!isNaN(intendedDurationInMinutes) && intendedDurationInMinutes > 0) {
+                pieChart.style.display = 'block';
+            } else {
+                console.log("Intended Duration is either not provided or invalid.");
+            }
+
+            function formatTime(hours, minutes) {
+                return `${hours}:${minutes.toString().padStart(2, '0')}m`;
+            }
+
+            function updateTimerDisplay(element, timeDiff, label) {
+                const time = new Date(timeDiff);
+                const hours = time.getUTCHours();
+                const minutes = time.getUTCMinutes();
+                element.textContent = formatTime(hours, minutes);
+            }
+
+            function updatePieChart(timeDiff, totalTime) {
+                const percentage = 1 - (timeDiff / totalTime);
+                const offset = percentage * 282.6; // Update dash offset
+                document.querySelector('.chart-foreground').style.strokeDashoffset = offset;
+
+                // Update the text in the middle of the pie chart
+                const remainingMinutes = Math.ceil(timeDiff / 60000);
+                chartText.textContent = `${remainingMinutes}m`;
+            }
+
+            function updateTimers() {
+                const now = new Date();
+                const elapsed = now - startTime;
+                const remaining = Math.max(endTime - now, 0);
+                updateTimerDisplay(countUpTimerElement, elapsed, "On the Clock");
+                updatePieChart(remaining, totalDuration);
+            }
+
+            const totalDuration = intendedDurationInMinutes * 60000;
+            let endTime = totalDuration ? new Date(startTime.getTime() + totalDuration) : null;
+            let timerInterval = setInterval(updateTimers, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>custom-on-the-clock-countdown</title>
+  </head>
+  <body>
+    <!-- <input aria-invalid="false" id="time-entry-as-text-form-Start_Time_Hour--1889065328" name="71d46271" placeholder="" type="text" class="MuiInputBase-input MuiOutlinedInput-input css-q1sikp" value="">
+    <button class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth sw-font-size-s sw-text-color-default sw-font-family-default sw-font-weight-light sw-border-radius-default sw-background-color-default hover:sw-background-color-default hover:sw-box-shadow-s sw-padding-left-xs sw-padding-right-xs sw-padding-top-6xs sw-padding-bottom-6xs sw-margin-top-5xs sw-margin-bottom-none sw-border-style-none sw-border-width-xs sw-border-color-AEAEB5 sw-letter-spacing-normal sw-width-full css-yqlv9v" tabindex="0" type="submit" tag="a" label="Save Time Entry">Save Time Entry<span class="MuiTouchRipple-root css-w0pj6f"></span></button> -->
+  </body>
+  <script type="text/javascript">
+    console.log(window);
+
+    async function show() {
+      await setTimeout(() => {
+        const saveTimeEntryBtn = document.querySelector(".css-yqlv9v");
+        const startTimeHrEl = document.getElementById(
+          "time-entry-as-text-form-Start_Time_Hour--1889065328"
+        );
+      }, 10000);
+      if (startTimeHrEl.value > 12 && startTimeHrEl.value < 1) {
+        show();
+      }
+      const newDiv = document.createElement("div");
+      const modalCard = document.createElement("div");
+      modalCard.textContent = `hellooooo `;
+      //CHECK THE styles.css! THERE IS STYLING HERE ALREADY FOR #modal
+      newDiv.id = "modal";
+      modalCard.classList.add("modal-card"); //we just want to ADD a class, not replace one
+      newDiv.appendChild(modalCard);
+      startTimeHrEl.appendChild(newDiv);
+
+      //MAKING THE MODAL DISSAPEAR
+      const closeButton = document.createElement("button");
+      //this will also work
+      closeButton.textContent = "\327";
+      closeButton.innerHTML = "&times";
+      closeButton.classList.add("close-button");
+      //FIX THIS STYLE
+      closeButton.classList.add("topright");
+      modalCard.appendChild(closeButton);
+      newDiv.addEventListener("click", (event) => {
+        if (event.target != modalCard) newDiv.remove();
+      });
+    }
+    saveTimeEntryBtn.addEventListener("click", show);
+  </script>
+</html>

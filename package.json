@@ -1,0 +1,24 @@
+{
+  "name": "integral-ed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "airtableBudget-Formulas.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Byrdbass/integral-ed.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Byrdbass/integral-ed/issues"
+  },
+  "homepage": "https://github.com/Byrdbass/integral-ed#readme",
+  "dependencies": {
+    "airtable": "^0.12.2",
+    "dotenv": "^16.3.1"
+  }
+}
