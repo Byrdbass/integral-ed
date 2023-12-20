@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Timers with Linear Countdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <style>
+      #timerContainer {
+        text-align: center;
+        font-size: 13px;
+        margin: auto;
+        width: 60%;
+        padding: 12px;
+        border: 0px solid #ebebeb;
+        border-radius: 10px;
+        box-sizing: border-box;
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .header {
+        font-family: 'Inter', sans-serif;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1em;
+        color: #374151;
+        margin-bottom: 5px;
+      }
+
+      .timer-value {
+        font-size: 2em;
+        color: #374151;
+      }
+
+      .progressBarContainer {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .progressBar {
+        height: 100%;
+        background-color: #4d72ac; /* Imperial purple */
+        width: 100%; /* Initial width */
+        border-radius: 10px;
+        transition: width 1s linear;
+      }
+
+      .timerSection {
+        flex-basis: 45%;
+      }
+
+      .remainingTimeText {
+        font-size: 1.5em;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="timerContainer">
+      <div class="timerSection">
+        <div class="header">On the Clock</div>
+        <div id="countUpTimer" class="timer-value">00:00:00</div>
+      </div>
+      <div class="timerSection">
+        <div class="header">Time Remaining</div>
+        <div class="remainingTimeText" id="remainingTimeText">--:--</div>
+        <div class="progressBarContainer" id="countdownBarContainer">
+          <div class="progressBar" id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+
+ <script>
+      // Function to play beep sound
+      function beep() {
+        var context = new AudioContext();
+        var o = context.createOscillator();
+        var g = context.createGain();
+
+        o.frequency.value = 432; // Beep frequency
+        o.connect(g);
+        g.connect(context.destination);
+        o.start(0);
+        g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 1); // Beep duration
+      }
+
+      // Counter for beep and timerInterval variable
+      let beepCount = 0;
+      const beepLimit = 3; // Number of times to play beep
+      let timerInterval; // Declare the timerInterval variable
+      window.location.search ="?prefill_Start_Time_Manual=2023-12-01T12:00:00&prefill_Intended_Duration=1";
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const startTime = new Date(params.get("prefill_Start_Time_Manual"));
+        const intendedDurationInMinutes = parseInt(params.get("prefill_Intended_Duration")) || 0;
+        const countUpTimerEl = document.getElementById('countUpTimer');
+        const remainingTimeEl = document.getElementById('remainingTimeText');
+        let countUpTime = 0;
+        let countdownTime = intendedDurationInMinutes * 60;
+        const totalDuration = intendedDurationInMinutes * 60000;
+        let endTime = new Date(startTime.getTime() + totalDuration);
+
+        function formatTime(hours, minutes, seconds) {
+          return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+        }
+
+        function formatTimeInSeconds(seconds) {
+          let hours = Math.floor(seconds / 3600);
+          let minutes = Math.floor((seconds % 3600) / 60);
+          let remainingSeconds = seconds % 60;
+          return intendedDurationInMinutes > 60 
+            ? `${hours.toString()}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`
+            : `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+        }
+
+        function updateTimerDisplay(element, timeDiff) {
+          const time = new Date(timeDiff);
+          const hours = time.getUTCHours();
+          const minutes = time.getUTCMinutes();
+          const seconds = time.getUTCSeconds();
+          element.textContent = formatTime(hours, minutes, seconds);
+        }
+
+        function updateTimers() {
+          const now = new Date();
+          const elapsed = now - startTime;
+          const remaining = Math.max(endTime - now, 0);
+          updateTimerDisplay(countUpTimerEl, elapsed);
+
+          if (intendedDurationInMinutes > 0) {
+            let progressBarWidth = (countdownTime / (intendedDurationInMinutes * 60)) * 100;
+            document.getElementById('progressBar').style.width = progressBarWidth + '%';
+            document.getElementById('remainingTimeText').textContent = formatTimeInSeconds(countdownTime);
+            countdownTime--;
+
+            if (countdownTime <= 0) {
+                countdownTime = 0
+            }
+
+            if (countdownTime <= 0 && beepCount < beepLimit) {
+              beep();
+              beepCount++; // Increment beep counter
+              if (beepCount >= beepLimit) {
+                document.getElementById('remainingTimeText').textContent = "Time has Expired"
+              }
+            }
+          }
+        }
+
+        // Set interval to update timers
+        timerInterval = setInterval(updateTimers, 1000); // Update every second
+      });
+    </script>
+  </body>
+</html>
