@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timer Input and Display</title>
+    <style>
+        #timerInputSection {
+            text-align: center;
+            margin: auto;
+            padding: 3px;
+            max-width: 450px;
+            display: flex;
+            justify-content: space-around;
+            border: 0px;
+            background-color: #f5f5f5;
+        }
+
+        #timerInputSection input[type="number"] {
+            padding: 6px;
+            margin: 5px;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            font-size: .85em;
+            width: 200px;
+        }
+
+        #timerInputSection label {
+            margin-left: 3px;
+            font-size: .7em;
+            display: flex;
+            align-items: center;
+        }
+
+        #timerInputSection input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-right: 7px;
+        }
+
+        #timerInputSection button {
+            padding: 8px;
+            margin: 4px;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #ffffff;
+            font-size: .85em;
+        }
+    </style>
+</head>
+<body>
+      <div id="timerInputSection">
+        <input type="number" id="intendedTimeInput" placeholder="Intended time (minutes) optional" min="0">
+        
+        <label>
+            <input type="checkbox" id="soundCheckbox"> Sound?
+        </label>
+    
+        <button onclick="submitTimerSettings()">Set Timer</button>
+    </div>
+
+  <script>
+        function submitTimerSettings() {
+            console.log("Function submitTimerSettings called."); // Debugging log
+
+            var intendedTime = document.getElementById('intendedTimeInput').value;
+            var soundEnabled = document.getElementById('soundCheckbox').checked;
+            var now = new Date().toISOString();
+            console.log(now)
+            var endTime = new Date(now).getTime() + intendedTime * 60000;
+
+            var prefillUrl = `https://time.softr.app/on-the-clock-countdown?prefill_Start_Time_Manual=${encodeURIComponent(now)}&prefill_End_Time_Manual=${encodeURIComponent(new Date(endTime).toISOString())}&prefill_Intended_Duration=${encodeURIComponent(intendedTime)}&sound=${encodeURIComponent(soundEnabled)}`;
+
+            console.log("Redirecting to URL:", prefillUrl); // Debugging log
+
+            window.location.href = prefillUrl;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var params = new URLSearchParams(window.location.search);
+            if(params.get('prefill_Intended_Duration')) {
+                document.getElementById('timerInputSection').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
