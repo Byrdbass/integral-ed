@@ -1,16 +1,76 @@
 <!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
-  <script>
+  <head> </head>
+  <body>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
 
+        const getTimezoneOffsetForCentralTime = (date) => {
+          const isDaylightSavingTime = (date) => {
+            const january = new Date(date.getFullYear(), 0, 1);
+            const july = new Date(date.getFullYear(), 6, 1);
+            return (
+              date.getTimezoneOffset() <
+              Math.max(january.getTimezoneOffset(), july.getTimezoneOffset())
+            );
+          };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("banana");
-            const clockInBtn = document.querySelector("css-w0pj6f")
-            console.log(clockInBtn)
-        });
+          const tzOffset = isDaylightSavingTime(date) ? -5 * 60 : -6 * 60;
+          const diff = tzOffset >= 0 ? "+" : "-";
+          return (
+            diff +
+            pad(Math.abs(tzOffset) / 60) +
+            ":" +
+            pad(Math.abs(tzOffset) % 60)
+          );
+        };
+
+        const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+        const toISOStringWithTimezone = (date) => {
+          return (
+            date.getFullYear() +
+            "-" +
+            pad(date.getMonth() + 1) +
+            "-" +
+            pad(date.getDate()) +
+            "T" +
+            pad(date.getHours()) +
+            ":" +
+            pad(date.getMinutes()) +
+            ":" +
+            pad(date.getSeconds()) +
+            getTimezoneOffsetForCentralTime(date)
+          );
+        };
+
+        const now2 = new Date();
+
+        let isoString2 = toISOStringWithTimezone(now2);
+
+        var now = new Date();
+
+        var formattedDate = `${(now.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-
+            ${now.getDate().toString().padStart(2, "0")}-
+            ${(now.getFullYear() % 100).toString().padStart(2, "0")}`;
+        var formattedTime = `${now.getHours().toString().padStart(2, "0")}:${now
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`;
+        var formattedDateTime = `${formattedDate}/${formattedTime}`;
+        console.log(now);
+        var formattedNow = now.toISOString();
+        console.log(formattedNow);
+
+        // Redirecting to the prefill URL
+        var clockInURL = `https://time.softr.app/on-the-clock?prefill_Start_Time_Manual=${encodeURIComponent(
+          isoString2
+        )}&prefill_End_Time_Manual=${encodeURIComponent(isoString2)}`;
+        setTimeout(() => {
+          window.location.href = clockInURL;
+        }, 10000);
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timesheet Prefill Clock In</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .message {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .typing {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.2rem;
+            box-sizing: border-box;
+            background-color: purple;
+            border-radius: 50%;
+            animation: typing 2s infinite;
+        }
+        .typing.typing-1 {
+            animation: typing 2s infinite;
+        }
+        .typing.typing-2 {
+            animation: typing 2s 250ms infinite;
+        }
+        .typing.typing-3 {
+            animation: typing 2s 500ms infinite;
+        }
+        @keyframes typing {
+            0%, 75%, 100% {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+            25% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var now = new Date();
+
+            // Format start time to CST in 24-hour format without seconds
+            var formattedStartDateTime = now.toLocaleString("en-US", {
+                timeZone: "America/Chicago",
+                hour12: false, // Use 24-hour format
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).replace(',', '');
+
+            // Calculate end time assuming a duration (e.g., 25 minutes from now)
+            var endTime = new Date(now.getTime() + 25 * 60000); // Adjust the duration as needed
+            var formattedEndDateTime = endTime.toLocaleString("en-US", {
+                timeZone: "America/Chicago",
+                hour12: false, // Use 24-hour format
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).replace(',', '');
+
+            // Update the URL with the correctly formatted start and end times
+            var clockInURL = `https://time.softr.app/test-on-the-clock-countdown?prefill_Start_Time_Manual_test=${encodeURIComponent(formattedStartDateTime)}&prefill_End_Time_Manual_test=${encodeURIComponent(formattedEndDateTime)}&prefill_Intended_Duration=25&sound=true`;
+
+            console.log(encodeURIComponent(formattedEndDateTime))
+
+            // Redirect to the updated URL after a short delay to show the animation
+            setTimeout(function() {
+                window.location.href = clockInURL;
+            }, 10000); // Adjust delay as needed
+        });
+    </script>
+</head>
+<body>
+    <div class="message">
+        Prefilling your timesheet to save you TIME...
+        <div>
+            <span class="typing typing-1"></span>
+            <span class="typing typing-2"></span>
+            <span class="typing typing-3"></span>
+        </div>
+    </div>
+</body>
+</
